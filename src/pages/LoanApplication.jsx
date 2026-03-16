@@ -166,7 +166,7 @@ export default function LoanApplication() {
 
       {/* ==================== FOOTER ==================== */}
       <footer className="footer">
-        © 2025 Max It Botswana
+        © 2026 Max It Botswana
       </footer>
     </div>
   );

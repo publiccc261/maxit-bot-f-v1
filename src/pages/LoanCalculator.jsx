@@ -135,7 +135,7 @@ export default function LoanCalculator() {
 
       {/* Footer */}
       <footer className="footer">
-        © 2025 Max It Botswana
+        © 2026 Max It Botswana
       </footer>
     </div>
   );

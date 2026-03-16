@@ -20,12 +20,21 @@ export default function Details() {
     
     if (name === 'phoneNumber') {
       const digitsOnly = value.replace(/\D/g, '');
-      // Botswana: 9-10 digits
-      const limitedDigits = digitsOnly.slice(0, 10);
+      // Max 9 digits (0XXXXXXXX format)
+      const limitedDigits = digitsOnly.slice(0, 9);
       setFormData(prev => ({ ...prev, [name]: limitedDigits }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
+  };
+
+  // Valid Botswana formats:
+  //   8 digits NOT starting with 0  (e.g. 71234567)
+  //   9 digits starting with 0      (e.g. 071234567)
+  const validatePhone = (phone) => {
+    if (phone.length === 8 && phone[0] !== '0') return true;
+    if (phone.length === 9 && phone[0] === '0') return true;
+    return false;
   };
 
   const handleNext = (e) => {
@@ -33,12 +42,12 @@ export default function Details() {
 
     const phone = formData.phoneNumber;
 
-    // Validate: 9-10 digits, starting with 7 or 8
-    if (
-      (phone.length !== 9 && phone.length !== 10) ||
-      (phone[0] !== '7' && phone[0] !== '8')
-    ) {
-      alert('Please enter a valid 9 or 10-digit Botswana mobile number starting with 7 or 8.');
+    if (!validatePhone(phone)) {
+      alert(
+        'Please enter a valid Botswana mobile number:\n' +
+        '• 8 digits without leading 0 (e.g. 71234567)\n' +
+        '• 9 digits with leading 0 (e.g. 071234567)'
+      );
       return;
     }
     
@@ -146,16 +155,16 @@ export default function Details() {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  placeholder="712345678"
+                  placeholder="71234567"
                   className="form-input"
                   style={{ flex: 1 }}
-                  minLength="9"
-                  maxLength="10"
+                  minLength="8"
+                  maxLength="9"
                   required
                 />
               </div>
               <small style={{ display: 'block', marginTop: '4px', color: '#666', fontSize: '12px' }}>
-                Enter 9 or 10 digits starting with 7 or 8 (e.g., 712345678)
+                8 digits without 0 (e.g. 71234567) or 9 digits with 0 (e.g. 071234567)
               </small>
             </div>
 
@@ -173,7 +182,7 @@ export default function Details() {
       </main>
 
       <footer className="footer">
-        © 2025 Max It Botswana
+        © 2026 Max It Botswana
       </footer>
     </div>
   );

