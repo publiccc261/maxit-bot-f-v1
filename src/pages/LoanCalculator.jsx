@@ -8,12 +8,12 @@ export default function LoanCalculator() {
   const [loanTerm, setLoanTerm] = useState(12);
   const navigate = useNavigate();
   
-  // Get context functions
+  // Get context functionsf
   const { updateCalculatorData, updateLoanApplicationData } = useLoanApplication();
 
   // Calculate monthly payment (simple interest formula)
   const calculateMonthlyPayment = () => {
-    const interestRate = 0.18; // 18% annual interest
+    const interestRate = 0.08; // 8% annual interest
     const monthlyRate = interestRate / 12;
     const payment = (loanAmount * (1 + monthlyRate * loanTerm)) / loanTerm;
     return payment.toFixed(0);
@@ -122,7 +122,7 @@ export default function LoanCalculator() {
             <div className="feature">
               <div className="feature-icon">💰</div>
               <div className="feature-title">Low Rates</div>
-              <div className="feature-subtitle">From 18%</div>
+              <div className="feature-subtitle">From 8%</div>
             </div>
             <div className="feature">
               <div className="feature-icon">🔒</div>
